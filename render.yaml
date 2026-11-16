@@ -9,5 +9,7 @@ services:
     envVars:
       - key: DEPLOYMENT_MODE
         value: Render (PaaS)
+      - key: STUDY_CATALOG_PUBLIC_CATALOG
+        value: "1"
       - key: STUDY_CATALOG_SECRET_KEY
         generateValue: true

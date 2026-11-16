@@ -127,6 +127,9 @@ def install_auth(app):
             return None
         if request.endpoint and request.endpoint.startswith("auth."):
             return None
+        if (os.environ.get("STUDY_CATALOG_PUBLIC_CATALOG") == "1"
+                and request.endpoint in {"index", "course_page", "lesson_page"}):
+            return None
         if g.user is None:
             return redirect(url_for("auth.login", next=request.path))
         return None

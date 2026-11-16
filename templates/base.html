@@ -18,8 +18,8 @@
           <span>Study<span class="brand-light">Catalog</span></span>
         </a>
         <nav class="main-nav" aria-label="Главное меню">
+          <a href="{{ url_for('index') }}#catalog">Курсы</a>
           {% if current_user %}
-            <a href="{{ url_for('index') }}#catalog">Курсы</a>
             <a href="{{ url_for('progress_page') }}">Мой прогресс</a>
             <a class="profile-nav-link" href="{{ url_for('auth.profile') }}" aria-label="Открыть личный кабинет">
               <span class="nav-avatar">
@@ -43,7 +43,7 @@
       <div class="wrap footer-inner">
         <div>
           <strong>Study Catalog</strong>
-          <p>Учебный проект на Python и Flask · Лабораторная работа №4</p>
+          <p>Учебный проект на Python и Flask · Study Catalog</p>
         </div>
         <div class="footer-links">
           {% if current_user %}<a href="{{ url_for('index') }}#catalog">Каталог</a><a href="{{ url_for('progress_page') }}">Прогресс</a><a href="{{ url_for('auth.profile') }}">Личный кабинет</a>{% endif %}
