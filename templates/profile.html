@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет · Study Catalog{% endblock %}
+{% block content %}
+<section class="profile-hero">
+  <div class="profile-glow profile-glow-one"></div><div class="profile-glow profile-glow-two"></div>
+  <div class="profile-hero-copy">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> МОЁ ПРОСТРАНСТВО</span>
+    <h1>Личный кабинет<span>.</span></h1>
+    <p>Настрой профиль под себя и следи за тем, как растут твои знания.</p>
+  </div>
+  <div class="profile-hero-identity">
+    <span class="profile-avatar profile-avatar-hero">
+      {% if current_user.avatar_file %}<img src="{{ url_for('auth.avatar_image', v=current_user.avatar_version) }}" alt="Фото профиля">{% else %}<span>{{ (current_user.display_name or current_user.username)[0]|upper }}</span>{% endif %}
+    </span>
+    <div><strong>{{ current_user.display_name or current_user.username }}</strong><span>@{{ current_user.username }}</span></div>
+  </div>
+</section>
+
+<section class="profile-stats" aria-label="Статистика обучения">
+  <div class="profile-stat"><span class="profile-stat-icon">✓</span><strong data-profile-stat="lessons">0</strong><span>уроков пройдено</span></div>
+  <div class="profile-stat"><span class="profile-stat-icon">☆</span><strong data-profile-stat="favorites">0</strong><span>курсов в избранном</span></div>
+  <div class="profile-stat"><span class="profile-stat-icon">◈</span><strong>4</strong><span>направления доступны</span></div>
+</section>
+
+{% for category, message in get_flashed_messages(with_categories=true) %}
+<p class="form-message profile-message {{ category }}" role="status">{{ message }}</p>
+{% endfor %}
+
+<div class="profile-layout">
+  <div class="profile-side">
+    <section class="profile-panel avatar-panel">
+      <div class="panel-heading"><span class="section-kicker">ФОТО ПРОФИЛЯ</span><h2>Твой образ</h2><p>Добавь фото, которое будет видно рядом с твоим именем.</p></div>
+      <div class="avatar-preview" aria-label="Предпросмотр фото профиля">
+        <img data-avatar-preview {% if current_user.avatar_file %}src="{{ url_for('auth.avatar_image', v=current_user.avatar_version) }}"{% else %}hidden{% endif %} alt="Предпросмотр фото">
+        <span data-avatar-initial {% if current_user.avatar_file %}hidden{% endif %}>{{ (current_user.display_name or current_user.username)[0]|upper }}</span>
+      </div>
+      <form method="post" action="{{ url_for('auth.upload_avatar') }}" enctype="multipart/form-data" class="avatar-upload-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="upload-pick" for="avatar-file">Выбрать фото <span aria-hidden="true">↗</span></label>
+        <input id="avatar-file" name="avatar" type="file" accept="image/jpeg,image/png,image/webp" required>
+        <span class="upload-file-name" data-avatar-file-name>JPG, PNG или WebP · до 2 МБ</span>
+        <button type="submit" class="button button-primary">Сохранить фото</button>
+      </form>
+      {% if current_user.avatar_file %}
+      <form method="post" action="{{ url_for('auth.remove_avatar') }}" class="remove-avatar-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">Удалить текущее фото</button>
+      </form>
+      {% endif %}
+    </section>
+    <section class="profile-panel progress-panel">
+      <span class="section-kicker">ТВОЙ ПУТЬ</span>
+      <h2>Маленькие шаги — большой результат</h2>
+      <div class="progress-panel-count"><strong data-profile-stat="progress">0 / 12</strong><span>уроков завершено</span></div>
+      <div class="progress-track"><span data-profile-progress></span></div>
+      <p>Прогресс уроков хранится в этом браузере.</p>
+      <a href="{{ url_for('progress_page') }}" class="profile-inline-link">Посмотреть весь прогресс →</a>
+    </section>
+  </div>
+
+  <div class="profile-main">
+    <section class="profile-panel edit-profile-panel">
+      <div class="panel-heading"><span class="section-kicker">НАСТРОЙКИ</span><h2>Расскажи о себе</h2><p>Эти данные можно изменить в любой момент.</p></div>
+      <form method="post" action="{{ url_for('auth.profile') }}" class="profile-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Отображаемое имя<input name="display_name" value="{{ current_user.display_name or current_user.username }}" minlength="2" maxlength="50" required></label>
+        <label>Логин <span class="field-hint">не меняется</span><input value="{{ current_user.username }}" disabled></label>
+        <label>О себе <span class="field-hint"><span data-bio-count>{{ (current_user.bio or '')|length }}</span>/280</span><textarea name="bio" maxlength="280" rows="5" placeholder="Например: изучаю Python и базы данных">{{ current_user.bio or '' }}</textarea></label>
+        <label>Любимое направление
+          <select name="favorite_course">
+            <option value="">Пока не выбрано</option>
+            {% for course in courses %}<option value="{{ course.slug }}" {% if current_user.favorite_course == course.slug %}selected{% endif %}>{{ course.icon }} {{ course.name }}</option>{% endfor %}
+          </select>
+        </label>
+        <button type="submit" class="button button-primary">Сохранить изменения <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+
+    <section class="profile-panel favorite-panel">
+      <span class="section-kicker">РЕКОМЕНДАЦИЯ</span>
+      {% if favorite %}
+      <div class="favorite-panel-inner"><span class="favorite-panel-icon">{{ favorite.icon }}</span><div><h2>{{ favorite.name }}</h2><p>Твоё любимое направление — возвращайся к урокам в любой момент.</p><a href="{{ url_for('course_page', slug=favorite.slug) }}" class="profile-inline-link">Открыть курс →</a></div></div>
+      {% else %}
+      <div class="favorite-panel-inner"><span class="favorite-panel-icon">✦</span><div><h2>Найди своё направление</h2><p>Выбери любимый курс в настройках профиля — он появится здесь.</p><a href="{{ url_for('index') }}#catalog" class="profile-inline-link">Посмотреть курсы →</a></div></div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

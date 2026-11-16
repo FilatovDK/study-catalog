@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Study Catalog — учиться интересно{% endblock %}
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> Твоя учебная площадка</span>
+    <h1 id="hero-title">Новые знания.<br><span>Твой темп.</span></h1>
+    <p>Выбери направление, открой короткие уроки и проверь себя. Прогресс сохраняется в этом браузере.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="#catalog">Смотреть курсы <span aria-hidden="true">↗</span></a>
+      <a class="button button-quiet" href="{{ url_for('progress_page') }}">Мой прогресс <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="hero-stats">
+      <div><strong>{{ '%02d'|format(courses|length) }}</strong><span>направления</span></div>
+      <div><strong>12</strong><span>коротких уроков</span></div>
+      <div><strong>∞</strong><span>попыток в тестах</span></div>
+    </div>
+  </div>
+  <div class="hero-visual" aria-hidden="true">
+    <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+    <div class="floating-card floating-card-top"><span>✦</span><div><small>ВЫБЕРИ НАПРАВЛЕНИЕ</small><strong>Начни с интересного</strong></div></div>
+    <div class="visual-center"><span class="visual-icon">📚</span><strong>Study<br>Catalog</strong><small>от идеи до результата</small></div>
+    <div class="floating-card floating-card-bottom"><span>✓</span><div><small>ПРАКТИКА</small><strong>Закрепляй знания</strong></div></div>
+  </div>
+</section>
+
+<section id="catalog" class="catalog-section" aria-labelledby="catalog-title">
+  <div class="section-heading">
+    <div>
+      <span class="section-kicker">КАТАЛОГ</span>
+      <h2 id="catalog-title">Выбери свою траекторию</h2>
+      <p>Каждый курс — три урока с примерами, заданием и мини-тестом.</p>
+    </div>
+    <span class="course-total">{{ courses|length }} курса</span>
+  </div>
+
+  <div class="catalog-toolbar">
+    <label class="search-field">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <span class="sr-only">Поиск по курсам</span>
+      <input id="course-search" type="search" placeholder="Найти курс или тему…" autocomplete="off">
+      <span class="search-shortcut" aria-hidden="true">/</span>
+    </label>
+    <div class="filters" role="group" aria-label="Фильтр курсов">
+      <button class="filter-chip is-active" type="button" data-filter="all" aria-pressed="true">Все</button>
+      <button class="filter-chip" type="button" data-filter="Разработка" aria-pressed="false">Разработка</button>
+      <button class="filter-chip" type="button" data-filter="Данные" aria-pressed="false">Данные</button>
+      <button class="filter-chip" type="button" data-filter="Инфраструктура" aria-pressed="false">Инфраструктура</button>
+      <button class="filter-chip favorite-filter" type="button" data-filter-favorites aria-pressed="false">★ Избранное</button>
+    </div>
+  </div>
+  <p class="results-line" id="results-line" aria-live="polite">Показано {{ courses|length }} курса</p>
+
+  <div class="course-grid" id="course-grid">
+    {% for course in courses %}
+    <article class="course-card color-{{ course.color }}" data-course-card data-slug="{{ course.slug }}" data-category="{{ course.category }}" data-search="{{ (course.name ~ ' ' ~ course.category ~ ' ' ~ course.description)|lower }}">
+      <div class="card-top"><span class="course-icon" aria-hidden="true">{{ course.icon }}</span><button class="favorite-button" type="button" data-favorite="{{ course.slug }}" aria-label="Добавить {{ course.name }} в избранное" aria-pressed="false">☆</button></div>
+      <a class="course-card-link" href="{{ url_for('course_page', slug=course.slug) }}">
+        <span class="course-category">{{ course.category }}</span>
+        <h3>{{ course.name }}</h3>
+        <p>{{ course.description }}</p>
+        <span class="card-open">Открыть курс <span aria-hidden="true">↗</span></span>
+      </a>
+      <div class="card-progress">
+        <div><span>Пройдено</span><strong data-progress-count="{{ course.slug }}">0 / {{ course.lessons|length }}</strong></div>
+        <div class="progress-track"><span data-progress-bar="{{ course.slug }}"></span></div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  <div class="empty-state" id="empty-state" hidden><span>⌕</span><h3>Ничего не найдено</h3><p>Попробуй другой запрос или сбрось фильтр.</p><button type="button" class="button button-outline" id="reset-filters">Показать все курсы</button></div>
+</section>
+
+<section class="how-section" aria-labelledby="how-title">
+  <div class="section-heading"><div><span class="section-kicker">КАК ЭТО РАБОТАЕТ</span><h2 id="how-title">Учиться просто</h2></div></div>
+  <div class="step-grid">
+    <div class="step-card"><span>01</span><h3>Выбери курс</h3><p>Найди интересную тему через поиск или фильтры.</p></div>
+    <div class="step-card"><span>02</span><h3>Изучи урок</h3><p>Прочитай объяснение и попробуй пример на практике.</p></div>
+    <div class="step-card"><span>03</span><h3>Проверь себя</h3><p>Ответь на вопрос и увидь результат в своём прогрессе.</p></div>
+  </div>
+</section>
+{% endblock %}

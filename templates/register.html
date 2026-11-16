@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Регистрация · Study Catalog{% endblock %}
+{% block content %}
+<section class="auth-wrap"><div class="auth-card">
+  <span class="section-kicker">ШАГ 1 ИЗ 2</span>
+  <h1>Создать аккаунт</h1>
+  <p>После регистрации подключите приложение-аутентификатор и подтвердите шестизначный код.</p>
+  {% for category, message in get_flashed_messages(with_categories=true) %}<p class="form-message {{ category }}" role="alert">{{ message }}</p>{% endfor %}
+  <form method="post" class="auth-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Логин<input name="username" autocomplete="username" minlength="3" maxlength="40" required autofocus></label>
+    <label>Пароль (от 8 символов)<input type="password" name="password" autocomplete="new-password" minlength="8" required></label>
+    <button class="button button-primary" type="submit">Настроить MFA →</button>
+  </form>
+  <p class="auth-switch">Есть аккаунт? <a href="{{ url_for('auth.login') }}">Войти</a></p>
+</div></section>
+{% endblock %}

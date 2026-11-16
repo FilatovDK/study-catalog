@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Настройка MFA · Study Catalog{% endblock %}
+{% block content %}
+<section class="auth-wrap"><div class="auth-card">
+  <span class="section-kicker">ШАГ 2 ИЗ 2</span>
+  <h1>Подключите MFA</h1>
+  <p>Откройте Google Authenticator или другое приложение TOTP. Отсканируйте QR-код либо добавьте ключ вручную.</p>
+  <img src="{{ qr_data }}" alt="QR-код для настройки TOTP" class="totp-qr">
+  <p class="totp-secret"><span>Ключ для {{ username }}:</span><code>{{ secret }}</code></p>
+  <p class="privacy-note">Сохраните ключ в приложении-аутентификаторе. Никому не показывайте его и не отправляйте в чат.</p>
+  {% for category, message in get_flashed_messages(with_categories=true) %}<p class="form-message {{ category }}" role="alert">{{ message }}</p>{% endfor %}
+  <form method="post" class="auth-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Код из приложения<input name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required autofocus></label>
+    <button class="button button-primary" type="submit">Подтвердить и войти →</button>
+  </form>
+</div></section>
+{% endblock %}

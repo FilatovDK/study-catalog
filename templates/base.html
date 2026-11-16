@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Study Catalog — интерактивный каталог учебных дисциплин">
+  <title>{% block title %}Study Catalog{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержимому</a>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href="{{ url_for('index') }}" aria-label="Study Catalog — главная">
+          <span class="brand-mark" aria-hidden="true">✦</span>
+          <span>Study<span class="brand-light">Catalog</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Главное меню">
+          {% if current_user %}
+            <a href="{{ url_for('index') }}#catalog">Курсы</a>
+            <a href="{{ url_for('progress_page') }}">Мой прогресс</a>
+            <a class="profile-nav-link" href="{{ url_for('auth.profile') }}" aria-label="Открыть личный кабинет">
+              <span class="nav-avatar">
+                {% if current_user.avatar_file %}<img src="{{ url_for('auth.avatar_image', v=current_user.avatar_version) }}" alt="">{% else %}{{ (current_user.display_name or current_user.username)[0]|upper }}{% endif %}
+              </span>
+              <span>{{ current_user.display_name or current_user.username }}</span>
+            </a>
+            <form action="{{ url_for('auth.logout') }}" method="post" class="logout-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Выйти</button></form>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}">Войти</a>
+            <a href="{{ url_for('auth.register') }}">Регистрация</a>
+          {% endif %}
+        </nav>
+        <div class="mode-pill"><span class="live-dot"></span>{{ deployment_mode }}</div>
+      </div>
+    </header>
+
+    <main id="main" class="wrap">{% block content %}{% endblock %}</main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <div>
+          <strong>Study Catalog</strong>
+          <p>Учебный проект на Python и Flask · Лабораторная работа №4</p>
+        </div>
+        <div class="footer-links">
+          {% if current_user %}<a href="{{ url_for('index') }}#catalog">Каталог</a><a href="{{ url_for('progress_page') }}">Прогресс</a><a href="{{ url_for('auth.profile') }}">Личный кабинет</a>{% endif %}
+          <a href="{{ url_for('health') }}">Проверка сервиса</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ course.name }} — Study Catalog{% endblock %}
+{% block content %}
+<nav class="breadcrumbs" aria-label="Путь"><a href="{{ url_for('index') }}">Главная</a><span>/</span><a href="{{ url_for('index') }}#catalog">Курсы</a><span>/</span><strong>{{ course.name }}</strong></nav>
+<section class="course-hero color-{{ course.color }}">
+  <div class="course-hero-main">
+    <span class="eyebrow"><span class="eyebrow-dot"></span>{{ course.category }}</span>
+    <div class="course-hero-icon" aria-hidden="true">{{ course.icon }}</div>
+    <h1>{{ course.name }}</h1>
+    <p>{{ course.intro }}</p>
+    <div class="hero-actions"><a class="button button-primary" href="{{ url_for('lesson_page', slug=course.slug, number=1) }}">Начать обучение <span aria-hidden="true">→</span></a><button class="button button-outline favorite-wide" type="button" data-favorite="{{ course.slug }}" aria-pressed="false">☆ В избранное</button></div>
+  </div>
+  <div class="course-hero-side"><span>В ПРОГРАММЕ</span><strong>{{ course.lessons|length }} урока</strong><p>Небольшие темы, понятные примеры и проверка знаний после каждого урока.</p><div class="progress-track"><span data-progress-bar="{{ course.slug }}"></span></div><small>Пройдено: <span data-progress-count="{{ course.slug }}">0 / {{ course.lessons|length }}</span></small></div>
+</section>
+
+<div class="detail-layout">
+  <section class="detail-main" aria-labelledby="lessons-title">
+    <span class="section-kicker">ПРОГРАММА КУРСА</span><h2 id="lessons-title">Что будем изучать</h2><p class="section-intro">Открывай уроки по порядку или переходи к интересующей теме.</p>
+    <div class="lesson-list">
+      {% for lesson in course.lessons %}
+      <a class="lesson-row" href="{{ url_for('lesson_page', slug=course.slug, number=loop.index) }}">
+        <span class="lesson-number">{{ '%02d'|format(loop.index) }}</span>
+        <span class="lesson-row-body"><strong>{{ lesson.title }}</strong><small>{{ lesson.lead }}</small></span>
+        <span class="lesson-row-meta"><span class="lesson-done" data-lesson-check="{{ course.slug }}:{{ loop.index }}" aria-label="Пройдено"></span><span aria-hidden="true">↗</span></span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  <aside class="outcomes-card"><span class="section-kicker">ПОСЛЕ КУРСА</span><h2>Ты сможешь</h2><ul>{% for outcome in course.outcomes %}<li><span>✓</span>{{ outcome }}</li>{% endfor %}</ul><p>Прогресс хранится локально в браузере, без регистрации.</p></aside>
+</div>
+{% endblock %}

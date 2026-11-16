@@ -1,0 +1,10 @@
+.vagrant/
+.venv/
+instance/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.db
+.env
+.env.*
+.grafana-admin-password

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Вход · Study Catalog{% endblock %}
+{% block content %}
+<section class="auth-wrap"><div class="auth-card">
+  <span class="section-kicker">ЗАЩИЩЁННЫЙ ВХОД</span>
+  <h1>С возвращением</h1>
+  <p>Сначала введите логин и пароль. Затем подтвердите вход кодом из приложения-аутентификатора.</p>
+  {% for category, message in get_flashed_messages(with_categories=true) %}<p class="form-message {{ category }}" role="alert">{{ message }}</p>{% endfor %}
+  <form method="post" class="auth-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Логин<input name="username" autocomplete="username" required autofocus></label>
+    <label>Пароль<input type="password" name="password" autocomplete="current-password" required></label>
+    <button class="button button-primary" type="submit">Продолжить к MFA →</button>
+  </form>
+  <p class="auth-switch">Ещё нет аккаунта? <a href="{{ url_for('auth.register') }}">Зарегистрироваться</a></p>
+</div></section>
+{% endblock %}
